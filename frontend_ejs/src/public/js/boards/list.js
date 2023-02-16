@@ -1,6 +1,8 @@
-window.onload = () => {
+// window.onload = () => {
+window.addEventListener('DOMContentLoaded', () => {
   getBoards();
-};
+});
+// };
 
 const getBoards = () => {
   axios({
