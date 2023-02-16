@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 export class CreateBoardDto {
   @IsString()
@@ -7,6 +7,9 @@ export class CreateBoardDto {
   @IsString()
   readonly content: string;
   
-  @IsString()
-  readonly author: string;
+  @IsNumber()
+  readonly writerId: number;
+
+  @IsNumber()
+  readonly joinLimit: number;
 }

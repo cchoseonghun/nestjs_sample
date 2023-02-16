@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Join } from './join.entity';
 
 @Entity({ schema: 'nestjs_sample', name: 'boards' })
 export class Board {
@@ -11,8 +20,11 @@ export class Board {
   @Column('varchar', { length: 1000 })
   content: string;
 
-  @Column('varchar', { length: 10 })
-  author: string;
+  @Column('int')
+  writerId: number;
+
+  @Column('int')
+  joinLimit: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -22,4 +34,7 @@ export class Board {
 
   @DeleteDateColumn()
   deletedAt: Date | null;
+
+  @OneToMany((type) => Join, (join) => join.board)
+  joins: Join[];
 }
