@@ -1,35 +1,34 @@
+import _ from 'lodash';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { Board } from './entities/board.entity';
 
 @Injectable()
 export class BoardsService {
-  private boards: Board[] = [{
-    id: 1,
-    title: 'title 1',
-    content: 'content 1',
-    author: 'author 1',
-  }];
-  private pk = 1;
+  constructor(
+    @InjectRepository(Board) private boardRepository: Repository<Board>,
+  ) {}
 
   async getBoards(): Promise<Board[]> {
-    return this.boards;
+    return await this.boardRepository.find({
+      where: { deletedAt: null },
+      select: ['id', 'title', 'author', 'createdAt'],
+    });
   }
 
-  async createBoard(boardData: CreateBoardDto): Promise<Board> {
-    this.pk += 1;
-    this.boards.push({
-      id: this.pk,
-      ...boardData,
-    });
-    const newData = await this.getBoard(this.pk);
-    return newData;
+  async createBoard(boardData: CreateBoardDto) {
+    this.boardRepository.insert(boardData);
   }
 
   async getBoard(id: number): Promise<Board> {
-    const board = this.boards.find(board => board.id === id);
-    if (!board) {
-      throw new NotFoundException(`Board with ID: ${id} not found.`);
+    const board = await this.boardRepository.findOne({
+      where: { id, deletedAt: null },
+      select: ['id', 'title', 'content', 'author', 'createdAt', 'updatedAt'],
+    });
+    if (_.isNil(board)) {
+      throw new NotFoundException(`해당하는 게시글이 존재하지 않음. ID: ${id}`);
     }
     return board;
   }
