@@ -1,11 +1,21 @@
 <script src="/public/js/boards/list.js" defer></script>
 
+<div class="row g-3 align-items-center">
+  <div class="col-auto">
+    <label for="userId" class="col-form-label">유저id</label>
+  </div>
+  <div class="col-auto">
+    <input type="text" id="userId" class="form-control">
+  </div>
+</div>
+
 <table class="table">
   <thead>
     <tr>
       <th scope="col">id</th>
       <th scope="col">title</th>
       <th scope="col">author</th>
+      <th scope="col">함께해요</th>
     </tr>
   </thead>
   <tbody id="boards"></tbody>

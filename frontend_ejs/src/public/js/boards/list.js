@@ -21,7 +21,8 @@ const getBoards = () => {
             <tr>
               <th scope="row">${board.id}</th>
               <td>${board.title}</td>
-              <td>${board.author}</td>
+              <td>${board.writerId}</td>
+              <td>${board.joins.length} / ${board.joinLimit} <button class="btn btn-primary" onclick="join(${board.id})">참여</button></td>
             </tr>
           `;
           document.querySelector('#boards').insertAdjacentHTML('beforeend', temp);
@@ -34,3 +35,8 @@ const getBoards = () => {
       console.log(e);
     });
 };
+
+const join = (boardId) => {
+  const userId = document.querySelector('#userId').value;
+  alert(`준비중. boardId: ${boardId}, userId: ${userId}`);
+}

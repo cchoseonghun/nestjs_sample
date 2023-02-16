@@ -10,12 +10,22 @@ const List = () => {
 
   return (
     <>
+      <div className="row g-3 align-items-center">
+        <div className="col-auto">
+          <label htmlFor="userId" className="col-form-label">유저id</label>
+        </div>
+        <div className="col-auto">
+          <input type="text" id="userId" className="form-control" />
+        </div>
+      </div>
+      
       <table className="table">
         <thead>
           <tr>
             <th scope="col">id</th>
             <th scope="col">title</th>
-            <th scope="col">author</th>
+            <th scope="col">writerId</th>
+            <th scope="col">함께해요</th>
           </tr>
         </thead>
         <tbody id="boards">
@@ -26,12 +36,13 @@ const List = () => {
                 <tr key={i}>
                   <th scope="row">{board.id}</th>
                   <td>{board.title}</td>
-                  <td>{board.author}</td>
+                  <td>{board.writerId}</td>
+                  <td>{board.joins.length} / {board.joinLimit} <button className="btn btn-primary" onClick={(e)=>{join(board.id, e)}}>참여</button></td>
                 </tr>
               )
             }) : 
             <tr>
-              <td colSpan={3}>데이터가 존재하지 않습니다.</td>
+              <td colSpan={4}>데이터가 존재하지 않습니다.</td>
             </tr>
           }
         </tbody>
@@ -55,6 +66,11 @@ const List = () => {
         console.log('axios 통신실패');
         console.log(e);
       });
+  }
+
+  function join(boardId) {
+    const userId = document.querySelector('#userId').value;
+    alert(`준비중. boardId: ${boardId}, userId: ${userId}`);
   }
 };
 
