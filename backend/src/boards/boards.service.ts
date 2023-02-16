@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { Board } from './entities/board.entity';
+import { UpdateBoardDto } from './dto/update-board.dto';
 
 @Injectable()
 export class BoardsService {
@@ -31,5 +32,18 @@ export class BoardsService {
       throw new NotFoundException(`해당하는 게시글이 존재하지 않음. ID: ${id}`);
     }
     return board;
+  }
+
+  async updateBoard(id: number, boardData: UpdateBoardDto) {
+    await this.getBoard(id);
+    this.boardRepository.update(id, {
+      title: boardData.title,
+      content: boardData.content,
+    });
+  }
+
+  async deleteBoard(id: number) {
+    await this.getBoard(id);
+    this.boardRepository.softDelete(id);
   }
 }
