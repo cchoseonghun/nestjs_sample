@@ -81,6 +81,8 @@ const List = () => {
           }
         </tbody>
       </table>
+
+      <button onClick={(e)=>{test(e)}}>동시성 테스트</button>
     </>
   );
 
@@ -99,6 +101,37 @@ const List = () => {
       .catch((e) => {
         console.log('axios 통신실패');
         console.log(e);
+      });
+  }
+
+  function test() {
+    test_form(9, 0);
+    test_form(9, 1);
+    test_form(9, 2);
+    test_form(9, 3);
+    test_form(9, 4);
+  }
+
+  function test_form(boardId, userId) {
+    axios
+      .post(
+        `http://localhost:8080/boards/${boardId}/join2`,
+        {userId},
+        { withCredentials: true },
+      )
+      .then((response) => {
+        const statusCode = response.status;
+        // console.log('status code: ' + statusCode);
+        if (statusCode === 201) {
+          console.log(`id: ${userId} 성공 - status code: ` + statusCode);
+          // getBoards();
+        } else {
+          console.log('status code: ' + statusCode);
+        }
+      })
+      .catch((e) => {
+        // console.log('axios 통신실패');
+        console.log(e.response.data.message);
       });
   }
 
