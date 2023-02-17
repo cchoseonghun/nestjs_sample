@@ -1,7 +1,13 @@
 import _ from 'lodash';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadGatewayException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { Board } from './entities/board.entity';
 import { UpdateBoardDto } from './dto/update-board.dto';
@@ -12,6 +18,7 @@ export class BoardsService {
   constructor(
     @InjectRepository(Board) private boardRepository: Repository<Board>,
     @InjectRepository(Join) private joinRepository: Repository<Join>,
+    private dataSource: DataSource,
   ) {}
 
   async getBoards(): Promise<Board[]> {
@@ -26,6 +33,7 @@ export class BoardsService {
         'boards.createdAt',
         'join.userId',
       ])
+      .orderBy('boards.id', 'DESC')
       .getMany();
   }
 
@@ -71,7 +79,38 @@ export class BoardsService {
   }
 
   async joinGroup(boardId: number, userId: number) {
-    await this.getBoard(boardId);
-    this.joinRepository.insert({ boardId, userId });
+    const board = await this.getBoard(boardId);
+    const boardJoinInfo = await this.joinRepository.find({
+      where: { boardId },
+    });
+
+    if (board.joinLimit <= boardJoinInfo.length) {
+      throw new ForbiddenException('자리 부족');
+    }
+    boardJoinInfo.forEach((join) => {
+      if (join.userId === userId) {
+        throw new ConflictException('이미 join 했습니다.');
+      }
+    });
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      this.joinRepository.insert({ boardId, userId });
+      const afterJoin = await this.joinRepository.count({
+        where: { boardId },
+      });
+      if (board.joinLimit <= afterJoin) {
+        throw new Error('동시성 문제 발생');
+      }
+      await queryRunner.commitTransaction();
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw new BadGatewayException(e.message);
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

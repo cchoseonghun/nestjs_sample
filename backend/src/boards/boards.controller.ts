@@ -48,7 +48,9 @@ export class BoardsController {
 
   @Post(':id/join')
   async joinGroup(@Param('id') boardId: number, @Req() req: Request) {
+    console.log(req.cookies);
+    
     const { userId } = req.cookies;
-    return await this.boardsService.joinGroup(boardId, userId);
+    return await this.boardsService.joinGroup(boardId, parseInt(userId));
   }
 }
