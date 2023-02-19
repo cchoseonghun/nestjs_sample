@@ -27,6 +27,18 @@ router.get('/map/google/target', (req, res) => {
   res.render('index', { component: 'map/google/target' });
 });
 
+router.get('/map/kakao/default', (req, res) => {
+  res.render('index', { component: 'map/kakao/default' });
+});
+
+router.get('/map/kakao/current', (req, res) => {
+  res.render('index', { component: 'map/kakao/current' });
+});
+
+router.get('/map/kakao/target', (req, res) => {
+  res.render('index', { component: 'map/kakao/target' });
+});
+
 router.get('/', (req, res) => {
   res.render('index');
 });

@@ -9,7 +9,9 @@
   <!-- Naver Maps API -->
   <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=w15uh3n2hf"></script>
   <!-- Google Maps API -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3lX5rx1BIDgBlPLUxhH_C5m6uGyhlQMw&callback=initMap&v=weekly" defer></script>
+  <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3lX5rx1BIDgBlPLUxhH_C5m6uGyhlQMw&callback=initMap&v=weekly" defer></script> -->
+  <!-- Kakao Maps API -->
+  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dc21899b1f32d3882a8254a8da0f3bd3"></script>
 </head>
 <body>
   
@@ -27,6 +29,12 @@
   <%- include('map/google/current') %>
   <% } else if (locals.component === 'map/google/target') { %>
   <%- include('map/google/target') %>
+  <% } else if (locals.component === 'map/kakao/default') { %>
+  <%- include('map/kakao/default') %>
+  <% } else if (locals.component === 'map/kakao/current') { %>
+  <%- include('map/kakao/current') %>
+  <% } else if (locals.component === 'map/kakao/target') { %>
+  <%- include('map/kakao/target') %>
   <% } else { %>
   <%- include('./boards/list') -%>
   <% } %>
