@@ -6,7 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Front-End with ejs</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous" />
+  <!-- Naver Maps API -->
   <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=w15uh3n2hf"></script>
+  <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3lX5rx1BIDgBlPLUxhH_C5m6uGyhlQMw&callback=initMap&v=weekly" defer></script>
 </head>
 <body>
   
@@ -18,6 +21,12 @@
   <%- include('map/naver/current') %>
   <% } else if (locals.component === 'map/naver/target') { %>
   <%- include('map/naver/target') %>
+  <% } else if (locals.component === 'map/google/default') { %>
+  <%- include('map/google/default') %>
+  <% } else if (locals.component === 'map/google/current') { %>
+  <%- include('map/google/current') %>
+  <% } else if (locals.component === 'map/google/target') { %>
+  <%- include('map/google/target') %>
   <% } else { %>
   <%- include('./boards/list') -%>
   <% } %>
