@@ -4,10 +4,23 @@ import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
 import { Board } from './entities/board.entity';
 import { Join } from './entities/join.entity';
+import { BullModule } from '@nestjs/bull';
+import { JoinConsumer } from './join.consumer';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Board, Join])],
+  imports: [
+    TypeOrmModule.forFeature([Board, Join]),
+    BullModule.forRoot({
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      }
+    }),
+    BullModule.registerQueue({
+      name: 'joinQueue'
+    })
+  ],
   controllers: [BoardsController],
-  providers: [BoardsService]
+  providers: [BoardsService, JoinConsumer]
 })
 export class BoardsModule {}

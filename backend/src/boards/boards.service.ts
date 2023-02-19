@@ -12,18 +12,17 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { Board } from './entities/board.entity';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { Join } from './entities/join.entity';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class BoardsService {
-  private isLock: boolean;
-
   constructor(
     @InjectRepository(Board) private boardRepository: Repository<Board>,
     @InjectRepository(Join) private joinRepository: Repository<Join>,
     private dataSource: DataSource,
-  ) {
-    this.isLock = false;
-  }
+    @InjectQueue('joinQueue') private testQueue: Queue,
+  ) {}
 
   async getBoards(): Promise<Board[]> {
     return await this.boardRepository
@@ -83,11 +82,6 @@ export class BoardsService {
   }
 
   async joinGroup(boardId: number, userId: number) {
-    if (this.isLock) {
-      throw new BadGatewayException('진행중인 상태가 있으므로 다시 시도해주시기 바랍니다.');
-    }
-    this.isLock = true;
-
     const board = await this.getBoard(boardId);
     const boardJoinInfo = await this.joinRepository.find({
       where: { boardId },
@@ -108,7 +102,6 @@ export class BoardsService {
     // await queryRunner.startTransaction('SERIALIZABLE');
 
     try {
-      // this.joinRepository.insert({ boardId, userId });
       await queryRunner.manager.getRepository(Join).insert({
         boardId, userId
       });
@@ -124,7 +117,14 @@ export class BoardsService {
       throw new BadGatewayException(e.message);
     } finally {
       await queryRunner.release();
-      this.isLock = false;
     }
+  }
+
+  async addJoinQueue(boardId: number, userId: number) {
+    const job = await this.testQueue.add('join', {
+      boardId, userId
+    }, 
+    // { delay: 1000 }
+    );
   }
 }

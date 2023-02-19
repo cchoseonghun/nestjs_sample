@@ -57,6 +57,6 @@ export class BoardsController {
   @Post(':id/join2')
   async joinGroup2(@Param('id') boardId: number, @Body() body: {userId: string}) {
     const { userId } = body;
-    return await this.boardsService.joinGroup(boardId, parseInt(userId));
+    return await this.boardsService.addJoinQueue(boardId, parseInt(userId));
   }
 }
