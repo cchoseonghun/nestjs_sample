@@ -21,7 +21,7 @@ export class BoardsService {
     @InjectRepository(Board) private boardRepository: Repository<Board>,
     @InjectRepository(Join) private joinRepository: Repository<Join>,
     private dataSource: DataSource,
-    @InjectQueue('joinQueue') private testQueue: Queue,
+    @InjectQueue('joinQueue') private joinQueue: Queue,
   ) {}
 
   async getBoards(): Promise<Board[]> {
@@ -121,7 +121,7 @@ export class BoardsService {
   }
 
   async addJoinQueue(boardId: number, userId: number) {
-    const job = await this.testQueue.add('join', {
+    const job = await this.joinQueue.add('join', {
       boardId, userId
     }, 
     // { delay: 1000 }
