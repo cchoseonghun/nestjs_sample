@@ -1,5 +1,6 @@
+import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,6 +12,27 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+    // BullModule.forRoot({
+    //   redis: {
+    //     host: 'localhost',
+    //     port: 6379,
+    //   }
+    // }),  // 아래로 변경해봄
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          host: 'localhost',
+          port: 6379,
+          retryStrategy: (times) => {
+            // check connection
+            //console.log('could not connect to redis!');
+            process.exit(1);
+          },
+        },
+      }),
+      inject: [ConfigService],
+    }),
     BoardsModule,
     UsersModule,
   ],

@@ -10,12 +10,6 @@ import { JoinConsumer } from './join.consumer';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Board, Join]),
-    BullModule.forRoot({
-      redis: {
-        host: 'localhost',
-        port: 6379,
-      }
-    }),
     BullModule.registerQueue({
       name: 'joinQueue'
     })
