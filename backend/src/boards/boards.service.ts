@@ -103,7 +103,7 @@ export class BoardsService {
 
     try {
       await queryRunner.manager.getRepository(Join).insert({
-        boardId, userId
+        boardId, userId,
       });
       const afterJoin = await this.joinRepository.count({
         where: { boardId },
@@ -121,10 +121,10 @@ export class BoardsService {
   }
 
   async addJoinQueue(boardId: number, userId: number) {
-    const job = await this.joinQueue.add('join', {
-      boardId, userId
-    }, 
-    // { delay: 1000 }
+    const job = await this.joinQueue.add(
+      'join',
+      { boardId, userId, },
+      { removeOnComplete: true, removeOnFail: true },
     );
   }
 }
