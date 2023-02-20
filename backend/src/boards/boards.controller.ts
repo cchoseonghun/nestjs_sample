@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -48,10 +49,12 @@ export class BoardsController {
 
   @Post(':id/join')
   async joinGroup(@Param('id') boardId: number, @Req() req: Request) {
-    console.log(req.cookies);
-    
     const { userId } = req.cookies;
-    return await this.boardsService.joinGroup(boardId, parseInt(userId));
+    if (userId === '' || isNaN(userId)) {
+      console.log('BadRequestException - userId: ' + userId);
+      throw new BadRequestException('userId가 잘못되었습니다.');
+    }
+    return await this.boardsService.addJoinQueue(boardId, parseInt(userId));
   }
 
   @Post(':id/join2')
