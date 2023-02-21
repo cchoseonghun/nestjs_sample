@@ -7,6 +7,7 @@ const Create = () => {
   const [content, setContent] = useState('');
   const [writerId, setWriterId] = useState(0);
   const [joinLimit, setJoinLimit] = useState(0);
+  const [file, setFile] = useState('');
 
   return (
     <>
@@ -25,6 +26,9 @@ const Create = () => {
           <Form.Group className="mb-3">
             <Form.Control type="text" placeholder="허용인원" onChange={(e) => { setJoinLimit(e.target.value); }}/>
           </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Control type="file" onChange={(e) => { setFile(e.target.files[0]); }}/>
+          </Form.Group>
           <Button variant="primary" onClick={() => { create(); }}>등록</Button>
         </Form>
       </Container>
@@ -33,13 +37,14 @@ const Create = () => {
   );
 
   function create() {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('writerId', writerId);
+    formData.append('joinLimit', joinLimit);
+    formData.append('file', file);
     axios
-      .post('http://localhost:8080/boards', {
-        title,
-        content,
-        writerId: parseInt(writerId),
-        joinLimit: parseInt(joinLimit),
-      })
+      .post('http://localhost:8080/boards', formData)
       .then((response) => {
         const statusCode = response.status;
         console.log('status code: ' + statusCode);

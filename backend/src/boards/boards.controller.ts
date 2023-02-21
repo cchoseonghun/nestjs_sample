@@ -8,7 +8,10 @@ import {
   Post,
   Put,
   Req,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
@@ -25,8 +28,19 @@ export class BoardsController {
   }
 
   @Post()
-  createBoard(@Body() boardData: CreateBoardDto) {
+  @UseInterceptors(FileInterceptor('file'))
+  createBoard(
+    @Body() boardData: CreateBoardDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    console.log('boardData: ');
+    console.log(boardData);
+
+    console.log('file: ');
+    console.log(file);
+    
     return this.boardsService.createBoard(boardData);
+    // return;
   }
 
   @Get(':id')
@@ -51,7 +65,6 @@ export class BoardsController {
   async joinGroup(@Param('id') boardId: number, @Req() req: Request) {
     const { userId } = req.cookies;
     if (userId === '' || isNaN(userId)) {
-      console.log('BadRequestException - userId: ' + userId);
       throw new BadRequestException('userId가 잘못되었습니다.');
     }
     return await this.boardsService.addJoinQueue(boardId, parseInt(userId));
