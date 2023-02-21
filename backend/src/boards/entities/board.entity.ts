@@ -26,6 +26,9 @@ export class Board {
   @Column('int')
   joinLimit: number;
 
+  @Column('varchar')
+  imagePath: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

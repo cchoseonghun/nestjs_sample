@@ -49,7 +49,6 @@ const Create = () => {
         const statusCode = response.status;
         console.log('status code: ' + statusCode);
         if (statusCode === 201) {
-          // getBoards();
           alert('등록완료');
           window.location.href = '/';
         }

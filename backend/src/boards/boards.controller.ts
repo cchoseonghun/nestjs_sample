@@ -33,14 +33,7 @@ export class BoardsController {
     @Body() boardData: CreateBoardDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log('boardData: ');
-    console.log(boardData);
-
-    console.log('file: ');
-    console.log(file);
-    
-    return this.boardsService.createBoard(boardData);
-    // return;
+    return this.boardsService.createBoard(boardData, file);
   }
 
   @Get(':id')

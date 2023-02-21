@@ -105,3 +105,6 @@ dist
 
 # .env
 # .env.test
+
+# 서버에 이미지 저장 시 세팅. S3 업로드 시 필요 없음
+**uploads/
