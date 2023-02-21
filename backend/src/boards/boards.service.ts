@@ -88,6 +88,7 @@ export class BoardsService {
     });
 
     if (board.joinLimit <= boardJoinInfo.length) {
+      console.log('자리부족 err: ', boardId, userId);
       throw new ForbiddenException('자리 부족');
     }
     boardJoinInfo.forEach((join) => {
@@ -121,7 +122,7 @@ export class BoardsService {
   }
 
   async addJoinQueue(boardId: number, userId: number) {
-    const job = await this.joinQueue.add(
+    await this.joinQueue.add(
       'join',
       { boardId, userId, },
       { removeOnComplete: true, removeOnFail: true },
