@@ -43,23 +43,26 @@ export class BoardsService {
       .getMany();
   }
 
-  async createBoard(boardData: CreateBoardDto, file: Express.Multer.File) {
+  // async createBoard(boardData: CreateBoardDto, file: Express.Multer.File) {
+  async createBoard(boardData: CreateBoardDto, file: Express.MulterS3.File) {
     if (!file) {
       throw new BadRequestException('파일이 존재하지 않습니다.');
     }
     // 저장 폴더 세팅(폴더 없으면 생성, 있으면 패스)
-    const uploadFolder = `uploads`;
-    fs.mkdirSync(uploadFolder, { recursive: true });
+    // const uploadFolder = `uploads`;
+    // fs.mkdirSync(uploadFolder, { recursive: true });
     // 파일 이름 날짜+확장자 -> 파일 이름의 한글 깨짐 현상을 무시할 수 있음
     const imagePath = Date.now() + extname(file.originalname);
     // 파일 업로드 경로
-    const uploadPath = `${__dirname}/../../${uploadFolder}/${imagePath}`;
+    // const uploadPath = `${__dirname}/../../${uploadFolder}/${imagePath}`;
 
     // 게시글 저장
     boardData.imagePath = imagePath;
+    throw new BadRequestException('테스트');
+    // 여기서 예외처리 할 경우 S3에 이미지 저장 안되게 하려면 어떻게?
     this.boardRepository.insert(boardData);
-    // 파일 생성
-    writeFileSync(uploadPath, file.buffer);
+    // 서버 내 파일 저장
+    // writeFileSync(uploadPath, file.buffer);
   }
 
   async getBoard(id: number): Promise<Board> {

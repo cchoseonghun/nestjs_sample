@@ -31,7 +31,8 @@ export class BoardsController {
   @UseInterceptors(FileInterceptor('file'))
   createBoard(
     @Body() boardData: CreateBoardDto,
-    @UploadedFile() file: Express.Multer.File,
+    // @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.MulterS3.File,
   ) {
     return this.boardsService.createBoard(boardData, file);
   }

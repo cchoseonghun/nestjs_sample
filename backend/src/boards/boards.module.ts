@@ -8,6 +8,7 @@ import { BullModule } from '@nestjs/bull';
 import { JoinConsumer } from './join.consumer';
 import { MulterModule } from '@nestjs/platform-express';
 import { multerOptionsFactory } from 'src/common/utils/multer.options.factory';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -16,7 +17,9 @@ import { multerOptionsFactory } from 'src/common/utils/multer.options.factory';
       name: 'joinQueue'
     }),
     MulterModule.registerAsync({
+      imports: [ConfigModule],
       useFactory: multerOptionsFactory,
+      inject: [ConfigService],
     }),
   ],
   controllers: [BoardsController],
