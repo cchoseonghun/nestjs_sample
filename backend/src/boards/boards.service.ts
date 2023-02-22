@@ -15,8 +15,7 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 import { Join } from './entities/join.entity';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import fs, { writeFileSync } from 'fs';
-import { extname } from 'path';
+import { S3Service } from 'src/aws/s3.service';
 
 @Injectable()
 export class BoardsService {
@@ -25,6 +24,7 @@ export class BoardsService {
     @InjectRepository(Join) private joinRepository: Repository<Join>,
     private dataSource: DataSource,
     @InjectQueue('joinQueue') private joinQueue: Queue,
+    private readonly s3Service: S3Service
   ) {}
 
   async getBoards(): Promise<Board[]> {
@@ -43,26 +43,16 @@ export class BoardsService {
       .getMany();
   }
 
-  // async createBoard(boardData: CreateBoardDto, file: Express.Multer.File) {
-  async createBoard(boardData: CreateBoardDto, file: Express.MulterS3.File) {
+  async createBoard(boardData: CreateBoardDto, file: Express.Multer.File) {
+  // async createBoard(boardData: CreateBoardDto, file: Express.MulterS3.File) {
     if (!file) {
       throw new BadRequestException('파일이 존재하지 않습니다.');
     }
-    // 저장 폴더 세팅(폴더 없으면 생성, 있으면 패스)
-    // const uploadFolder = `uploads`;
-    // fs.mkdirSync(uploadFolder, { recursive: true });
-    // 파일 이름 날짜+확장자 -> 파일 이름의 한글 깨짐 현상을 무시할 수 있음
-    const imagePath = Date.now() + extname(file.originalname);
-    // 파일 업로드 경로
-    // const uploadPath = `${__dirname}/../../${uploadFolder}/${imagePath}`;
-
-    // 게시글 저장
-    boardData.imagePath = imagePath;
-    throw new BadRequestException('테스트');
-    // 여기서 예외처리 할 경우 S3에 이미지 저장 안되게 하려면 어떻게?
+    boardData.imagePath = file.filename;
     this.boardRepository.insert(boardData);
-    // 서버 내 파일 저장
-    // writeFileSync(uploadPath, file.buffer);
+
+    // S3 이미지 저장
+    await this.s3Service.putObject(file);
   }
 
   async getBoard(id: number): Promise<Board> {

@@ -9,6 +9,7 @@ import { JoinConsumer } from './join.consumer';
 import { MulterModule } from '@nestjs/platform-express';
 import { multerOptionsFactory } from 'src/common/utils/multer.options.factory';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { S3Service } from 'src/aws/s3.service';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [BoardsController],
-  providers: [BoardsService, JoinConsumer]
+  providers: [BoardsService, JoinConsumer, S3Service]
 })
 export class BoardsModule {}
