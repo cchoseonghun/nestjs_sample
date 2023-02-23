@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import LoginModal from '../users/login.modal';
-import { setModalName, setShow } from '../../store/modalSlice';
+import { setModalName, setShow } from '../../store/modal.slice';
 
 const List = () => {
   const [boards, setBoards] = useState([]);

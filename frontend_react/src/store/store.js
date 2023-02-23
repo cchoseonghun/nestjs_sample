@@ -4,7 +4,7 @@ import { combineReducers } from 'redux';
 import { persistReducer } from 'redux-persist';
 import thunk from 'redux-thunk';
 
-import modal from './modalSlice';
+import modal from './modal.slice';
 
 const reducers = combineReducers({
   modal: modal.reducer,
