@@ -1,9 +1,15 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import LoginModal from '../users/login.modal';
+import { setModalName, setShow } from '../../store/modalSlice';
 
 const List = () => {
   const [boards, setBoards] = useState([]);
+
+  let state = useSelector((state)=> state );
+  let dispatch = useDispatch();
 
   useEffect(() => {
     getBoards();
@@ -11,6 +17,12 @@ const List = () => {
 
   return (
     <>
+      { state.modal.modalName === 'login' && <LoginModal /> }
+
+      <Button variant="primary" onClick={()=>{showModal('login')}}>
+        회원가입 모달창
+      </Button>
+
       <Button variant="primary" onClick={()=>{window.location.href='/create'}}>글쓰기</Button>
 
       <div className="row g-3 align-items-center">
@@ -52,6 +64,11 @@ const List = () => {
       </table>
     </>
   );
+
+  function showModal(modalName){
+    dispatch(setModalName(modalName));
+    dispatch(setShow(true));
+  }
 
   // const getBoards = () => {
   function getBoards() {
