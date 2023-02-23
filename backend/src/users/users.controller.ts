@@ -13,7 +13,6 @@ export class UsersController {
   @Put('/verifyEmail')
   async verifyEmail(@Body() body, @Query() query) {
     const { verifyToken } = query;
-    return await this.usersService.verifyEmail(body.email, verifyToken);
+    return await this.usersService.verifyEmail(body.email, parseInt(verifyToken));
   }
-
 }

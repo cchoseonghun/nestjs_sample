@@ -1,5 +1,5 @@
 import { BullModule } from '@nestjs/bull';
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -32,6 +32,11 @@ import { UsersModule } from './users/users.module';
         },
       }),
       inject: [ConfigService],
+    }),
+    CacheModule.register({
+      ttl: 300000,  // 데이터 캐싱 시간(밀리 초 단위)
+      max: 100, // 최대 캐싱 개수
+      isGlobal: true,
     }),
     BoardsModule,
     UsersModule,

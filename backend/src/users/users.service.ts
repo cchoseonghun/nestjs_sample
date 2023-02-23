@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import _ from 'lodash';
+import { CACHE_MANAGER, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { EmailService } from './email.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
+  ) {}
 
   async sendVerification(email: string) {
     const verifyToken = this.generateRandomNumber();
-    
-    console.log('캐싱할 데이터: ', email, verifyToken);
-    // TODO: verifyToken이랑 이메일 캐싱
-
+    await this.cacheManager.set(email, verifyToken);
     await this.sendVerifyToken(email, verifyToken);
   }
   
@@ -19,9 +21,14 @@ export class UsersService {
   }
 
   async verifyEmail(email:string, verifyToken: number) {
-    console.log('verifyEmail: ', email, verifyToken);
-    // TODO: 캐싱된 데이터 찾기. 있으면 200, 없으면 Exception
-    return;
+    const cache_verifyToken = await this.cacheManager.get(email);
+    if (_.isNil(cache_verifyToken)) {
+      throw new NotFoundException('해당 메일로 전송된 인증번호가 없습니다.');
+    } else if (cache_verifyToken !== verifyToken) {
+      throw new UnauthorizedException('인증번호가 일치하지 않습니다.');
+    } else {
+      await this.cacheManager.del(email);
+    }
   }
 
   private generateRandomNumber(): number {
