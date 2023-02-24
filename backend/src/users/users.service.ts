@@ -12,7 +12,7 @@ export class UsersService {
 
   async sendVerification(email: string) {
     const verifyToken = this.generateRandomNumber();
-    await this.cacheManager.set(email, verifyToken);
+    await this.cacheManager.set(email, verifyToken, { ttl: 3600 });
     await this.sendVerifyToken(email, verifyToken);
   }
   
@@ -21,7 +21,7 @@ export class UsersService {
   }
 
   async verifyEmail(email:string, verifyToken: number) {
-    const cache_verifyToken = await this.cacheManager.get(email);
+    const cache_verifyToken = await this.cacheManager.get<number>(email);
     if (_.isNil(cache_verifyToken)) {
       throw new NotFoundException('해당 메일로 전송된 인증번호가 없습니다.');
     } else if (cache_verifyToken !== verifyToken) {

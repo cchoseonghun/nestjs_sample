@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { BoardsModule } from './boards/boards.module';
 import { TypeOrmConfigService } from './config/typeorm.config.service';
 import { UsersModule } from './users/users.module';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -33,11 +34,27 @@ import { UsersModule } from './users/users.module';
       }),
       inject: [ConfigService],
     }),
-    CacheModule.register({
-      ttl: 300000,  // 데이터 캐싱 시간(밀리 초 단위)
-      max: 100, // 최대 캐싱 개수
+    // CacheModule.register({
+    //   ttl: 300000,  // 데이터 캐싱 시간(밀리 초 단위)
+    //   max: 100, // 최대 캐싱 개수
+    //   isGlobal: true,
+    // }),
+    CacheModule.register({  // redis 적용
       isGlobal: true,
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
     }),
+    // CacheModule.registerAsync({  // env 사용 시 변경
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (configService: ConfigService) => ({
+    //     isGlobal: true,
+    //     store: redisStore,
+    //     host: 'localhost',
+    //     port: 6379,
+    //   }),
+    // }),
     BoardsModule,
     UsersModule,
   ],
